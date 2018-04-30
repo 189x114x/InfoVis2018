@@ -1,6 +1,6 @@
 <html>
     <head>
-	<title>W06: Example 03</title>
+	<title>W06: Example 04</title>
     </head>
     <body>
 	<script src="https://threejs.org/build/three.min.js"></script>
@@ -11,17 +11,31 @@
 	varying vec3 normal_vector;
 	uniform vec3 light_position;
 
-	vec3 BlinnPhongReflection(vec3 C,vec3 L,vec3 N,vec3 V){
+	vec3 CookTorranceReflection(vec3 C,vec3 L,vec3 N,vec3 V){
 		float ka=0.3;
 		float kd=0.5;
 		float ks=0.8;
-		float n=50.0;
+		float m=0.1;
+		float F0=0.1;
 
-		vec3 H=normalize(L+V);
 		float dd=max(dot(N,L),0.0);
-		float ds=pow(max(dot(N,H),0.0),n);
-		if(dd<=0.0){
-			ds=0.0;
+		float ds=0.0;
+		if(dd>0.0){
+			vec3 H=normalize(L+V);
+			float NL=dd;
+			float NH=dot(N,H);
+			float NV=dot(N,V);
+			float VH=dot(V,H);
+
+			float D=(1.0/(4.0*m*m*NH*NH*NH*NH))*exp((NH*NH-1.0)/(m*m*NH*NH));
+			float G=min(min(2.0*NH*NV/VH,2.0*NH*NL/VH),1.0);
+
+			float n=(1.0+sqrt(F0))/(1.0-sqrt(F0));
+			float c=dot(L,H);
+			float g=sqrt(n*n+c*c-1.0);
+			float F=0.5*(((g-c)/(g+c))*((g-c)/(g+c)))*(1.0+((c*(g+c)-1.0)/(c*(g-c)+1.0))*((c*(g+c)-1.0)/(c*(g-c)+1.0)));
+
+			ds=(F/3.14)*(D*G/(NL*NV));
 		}
 
 		float Ia=ka;
@@ -29,6 +43,7 @@
 		float Is=ks*ds;
 		return C*(Ia+Id+Is);
 	}
+
 
 	void main(){
 		point_position = modelViewMatrix * vec4( position, 1.0 );
@@ -39,7 +54,7 @@
 		vec3 N = normalize( normal_vector );
 		vec3 V = normalize( cameraPosition - point_position.xyz);
 
-		point_color = BlinnPhongReflection( C, L, N ,V );
+		point_color = CookTorranceReflection( C, L, N ,V );
 		gl_Position = projectionMatrix * point_position;
 	}
 	</script>
@@ -71,17 +86,31 @@
 	varying vec3 normal_vector;
 	uniform vec3 light_position;
 
-	vec3 BlinnPhongReflection(vec3 C,vec3 L,vec3 N,vec3 V){
+	vec3 CookTorranceReflection(vec3 C,vec3 L,vec3 N,vec3 V){
 		float ka=0.3;
 		float kd=0.5;
 		float ks=0.8;
-		float n=50.0;
+		float m=0.1;
+		float F0=0.1;
 
-		vec3 H=normalize(L+V);
 		float dd=max(dot(N,L),0.0);
-		float ds=pow(max(dot(N,H),0.0),n);
-		if(dd<=0.0){
-			ds=0.0;
+		float ds=0.0;
+		if(dd>0.0){
+			vec3 H=normalize(L+V);
+			float NL=dd;
+			float NH=dot(N,H);
+			float NV=dot(N,V);
+			float VH=dot(V,H);
+
+			float D=(1.0/(4.0*m*m*NH*NH*NH*NH))*exp((NH*NH-1.0)/(m*m*NH*NH));
+			float G=min(min(2.0*NH*NV/VH,2.0*NH*NL/VH),1.0);
+
+			float n=(1.0+sqrt(F0))/(1.0-sqrt(F0));
+			float c=dot(L,H);
+			float g=sqrt(n*n+c*c-1.0);
+			float F=0.5*(((g-c)/(g+c))*((g-c)/(g+c)))*(1.0+((c*(g+c)-1.0)/(c*(g-c)+1.0))*((c*(g+c)-1.0)/(c*(g-c)+1.0)));
+
+			ds=(F/3.14)*(D*G/(NL*NV));
 		}
 
 		float Ia=ka;
@@ -96,7 +125,7 @@
 		vec3 N = normalize( normal_vector );
 		vec3 V = normalize( cameraPosition - point_position.xyz);
 
-		vec3 shaded_color = BlinnPhongReflection(C,L,N,V);
+		vec3 shaded_color = CookTorranceReflection(C,L,N,V);
 		gl_FragColor = vec4(shaded_color, 1.0 );
 	 }
 	</script>
