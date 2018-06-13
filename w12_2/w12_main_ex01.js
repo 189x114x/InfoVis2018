@@ -45,7 +45,6 @@ function main()
             f1.add(up, 'z');
             f1.add(up, 'create').onChange(set);
             var f2 = gui.addFolder('Change Tubeline');
-            f2.add(up, 'scale', 0, 10).onChange(change);
             f2.add(up, 'radius', 0, 10).onChange(change);
             f2.add(up, 'reflection', {Lambertian:1, Phong:2, BlinnPhong:3, CookTorrance:4, Toon:5}).onChange(select);
        }
@@ -100,7 +99,6 @@ function main()
 		 this.y = 32;
 		 this.z = 32;
 		 this.create = function(){};
-		 this.scale = 10;
 		 this.radius = 2;
 		 this.reflection = 1;
 	};
@@ -172,28 +170,7 @@ function main()
 
     function change(){
     	mesh.geometry.dispose();
-    	function CustomSinCurve( scale ) {
-
-         	THREE.Curve.call( this );
-         	this.scale = ( scale === undefined ) ? 1 : scale;
-
-         }
-
-         CustomSinCurve.prototype = Object.create( THREE.Curve.prototype );
-         CustomSinCurve.prototype.constructor = CustomSinCurve;
-
-         CustomSinCurve.prototype.getPoint = function ( t ) {
-
-         	var tx = t * 3 + 1.8;
-         	var ty = Math.sin( 2 * Math.PI * t ) + 3.0;
-         	var tz = t * 3 + 1.8;
-
-         	return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
-
-         };
-
-         var path = new CustomSinCurve( up.scale );
-         mesh.geometry = new THREE.TubeGeometry( path, 20, up.radius, 8, false );
+    	mesh.geometry = new THREE.TubeGeometry( 10, 20, up.radius, 8, false );
     }
 
 
