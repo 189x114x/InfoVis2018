@@ -198,7 +198,6 @@ function main()
 
 
     function set(){
-    	//更新処理
          var seed_point = volume.objectCenter();
          var streamline = new KVS.Streamline();
          streamline.setIntegrationStepLength( 0.5 );
