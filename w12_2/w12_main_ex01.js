@@ -7,7 +7,7 @@ function main()
 
     screen.init( volume );
     setup();
-    createTubeline(10, 20, 2, 8)
+    createTubeline(20, 2, 8)
     screen.loop();
 
 
@@ -51,7 +51,7 @@ function main()
 
     }
 
-    function createTubeline(s,segments,radius,radialSegments){
+    function createTubeline(segments,radius,radialSegments){
 
     	 function CustomSinCurve( scale ) {
 
@@ -77,7 +77,7 @@ function main()
          renderer.setSize( 500, 500 );
          document.body.appendChild( renderer.domElement );
 
-         path = new CustomSinCurve( s );
+         path = new CustomSinCurve( 10 );
          geometry = new THREE.TubeGeometry( path, segments, radius, radialSegments, false );
          material = new THREE.ShaderMaterial({
          	vertexColors: THREE.VertexColors,
@@ -170,6 +170,33 @@ function main()
 
     function change(){
     	mesh.geometry.dispose();
+	
+	function CustomSinCurve( scale ) {
+
+         	THREE.Curve.call( this );
+         	this.scale = ( scale === undefined ) ? 1 : scale;
+
+         }
+
+         CustomSinCurve.prototype = Object.create( THREE.Curve.prototype );
+         CustomSinCurve.prototype.constructor = CustomSinCurve;
+
+         CustomSinCurve.prototype.getPoint = function ( t ) {
+
+         	var tx = t * 3 + 1.8;
+         	var ty = Math.sin( 2 * Math.PI * t ) + 3.0;
+         	var tz = t * 3 + 1.8;
+
+         	return new THREE.Vector3( tx, ty, tz ).multiplyScalar( this.scale );
+
+         };
+
+         var renderer = new THREE.WebGLRenderer();
+         renderer.setSize( 500, 500 );
+         document.body.appendChild( renderer.domElement );
+
+         path = new CustomSinCurve( 10 );
+	
     	mesh.geometry = new THREE.TubeGeometry( 10, 20, up.radius, 8, false );
     }
 
