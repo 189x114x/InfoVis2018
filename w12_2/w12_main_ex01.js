@@ -197,7 +197,7 @@ function main()
 
          path = new CustomSinCurve( 10 );
 	
-    	mesh.geometry = new THREE.TubeGeometry( 10, 20, up.radius, 8, false );
+    	mesh.geometry = new THREE.TubeGeometry( path, 20, up.radius, 8, false );
     }
 
 
