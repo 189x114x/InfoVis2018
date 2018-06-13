@@ -7,7 +7,7 @@ function main()
 
     screen.init( volume );
     setup();
-    createTubeline(20, 2, 8)
+    createTubeline(10, 20, 2, 8)
     screen.loop();
 
 
@@ -45,13 +45,14 @@ function main()
             f1.add(up, 'z');
             f1.add(up, 'create').onChange(set);
             var f2 = gui.addFolder('Change Tubeline');
+            f2.add(up, 'scale', 0, 10).onChange(change);
             f2.add(up, 'radius', 0, 10).onChange(change);
             f2.add(up, 'reflection', {Lambertian:1, Phong:2, BlinnPhong:3, CookTorrance:4, Toon:5}).onChange(select);
        }
 
     }
 
-    function createTubeline(segments,radius,radialSegments){
+    function createTubeline(s,segments,radius,radialSegments){
 
     	 function CustomSinCurve( scale ) {
 
@@ -77,7 +78,7 @@ function main()
          renderer.setSize( 500, 500 );
          document.body.appendChild( renderer.domElement );
 
-         path = new CustomSinCurve( 10 );
+         path = new CustomSinCurve( s );
          geometry = new THREE.TubeGeometry( path, segments, radius, radialSegments, false );
          material = new THREE.ShaderMaterial({
          	vertexColors: THREE.VertexColors,
@@ -99,6 +100,7 @@ function main()
 		 this.y = 32;
 		 this.z = 32;
 		 this.create = function(){};
+		 this.scale = 10;
 		 this.radius = 2;
 		 this.reflection = 1;
 	};
@@ -170,8 +172,7 @@ function main()
 
     function change(){
     	mesh.geometry.dispose();
-	
-	function CustomSinCurve( scale ) {
+    	function CustomSinCurve( scale ) {
 
          	THREE.Curve.call( this );
          	this.scale = ( scale === undefined ) ? 1 : scale;
@@ -191,13 +192,8 @@ function main()
 
          };
 
-         var renderer = new THREE.WebGLRenderer();
-         renderer.setSize( 500, 500 );
-         document.body.appendChild( renderer.domElement );
-
-         path = new CustomSinCurve( 10 );
-	
-    	mesh.geometry = new THREE.TubeGeometry( path, 20, up.radius, 8, false );
+         var path = new CustomSinCurve( up.scale );
+         mesh.geometry = new THREE.TubeGeometry( path, 20, up.radius, 8, false );
     }
 
 
